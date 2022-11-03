@@ -34,5 +34,5 @@ def test_end_to_end():
     assert result == expected
 
 def test_time_range_backwards():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"End time: .* is before start time: .*\."):
         time_range("2010-01-12 10:45:00", "2010-01-12 10:31:00")
