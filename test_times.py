@@ -1,36 +1,34 @@
 from times import *
 import pytest
 
-def test_given_input():
-    """Standard results"""
-    large = time_range("2010-01-12 10:00:00", "2010-01-12 12:00:00")
-    short = time_range("2010-01-12 10:30:00", "2010-01-12 10:45:00", 2, 60)
-    result = compute_overlap_time(large, short)
-    expected = [('2010-01-12 10:30:00', '2010-01-12 10:37:00'), ('2010-01-12 10:38:00', '2010-01-12 10:45:00')]
-    assert result == expected
+test_cases = [
+    ( # Standard given input
+        time_range("2010-01-12 10:00:00", "2010-01-12 12:00:00"),
+        time_range("2010-01-12 10:30:00", "2010-01-12 10:45:00", 2, 60),
+        [('2010-01-12 10:30:00', '2010-01-12 10:37:00'), 
+         ('2010-01-12 10:38:00', '2010-01-12 10:45:00')]
+    ),
+    ( # Two time ranges that do not overlap
+        time_range("2010-01-12 10:00:00", "2010-01-12 12:00:00"),
+        time_range("2010-01-12 12:30:00", "2010-01-12 12:45:00"),
+        []
+    ),
+    ( # Two time ranges that both contain several intervals each
+        time_range("2010-01-12 10:00:00", "2010-01-12 10:31:00", 2, 60), #10-15 16-31
+        time_range("2010-01-12 10:15:00", "2010-01-12 10:46:00", 2, 60), #15-30 31-46
+        [('2010-01-12 10:15:00', '2010-01-12 10:15:00'),
+         ('2010-01-12 10:16:00', '2010-01-12 10:30:00'),
+         ('2010-01-12 10:31:00', '2010-01-12 10:31:00')]
+    ),
+    ( # Two time ranges that end exactly at the same time when the other starts
+        time_range("2010-01-12 10:00:00", "2010-01-12 10:31:00"),
+        time_range("2010-01-12 10:31:00", "2010-01-12 10:46:00"),
+        [('2010-01-12 10:31:00', '2010-01-12 10:31:00')]
+    )]
 
-def test_no_overlap():
-    """Two time ranges that do not overlap"""
-    large = time_range("2010-01-12 10:00:00", "2010-01-12 12:00:00")
-    short = time_range("2010-01-12 12:30:00", "2010-01-12 12:45:00")
-    result = compute_overlap_time(large, short)
-    expected = []
-    assert result == expected
-
-def test_several_intervals():
-    """Two time ranges that both contain several intervals each"""
-    large = time_range("2010-01-12 10:00:00", "2010-01-12 10:31:00", 2, 60) #10-15 16-31
-    short = time_range("2010-01-12 10:15:00", "2010-01-12 10:46:00", 2, 60) #15-30 31-46
-    result = compute_overlap_time(large, short)
-    expected = [('2010-01-12 10:15:00', '2010-01-12 10:15:00'), ('2010-01-12 10:16:00', '2010-01-12 10:30:00'), ('2010-01-12 10:31:00', '2010-01-12 10:31:00')]
-    assert result == expected
-
-def test_end_to_end():
-    """Two time ranges that end exactly at the same time when the other starts"""
-    large = time_range("2010-01-12 10:00:00", "2010-01-12 10:31:00")
-    short = time_range("2010-01-12 10:31:00", "2010-01-12 10:46:00")
-    result = compute_overlap_time(large, short)
-    expected = [('2010-01-12 10:31:00', '2010-01-12 10:31:00')]
+@pytest.mark.parametrize("time_range_1, time_range_2, expected", test_cases)
+def test_compute_overlap_time(time_range_1, time_range_2, expected):
+    result = compute_overlap_time(time_range_1, time_range_2)
     assert result == expected
 
 def test_time_range_backwards():
