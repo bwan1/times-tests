@@ -36,3 +36,9 @@ def test_end_to_end():
 def test_time_range_backwards():
     with pytest.raises(ValueError, match=r"End time: .* is before start time: .*\."):
         time_range("2010-01-12 10:45:00", "2010-01-12 10:31:00")
+
+"""
+For test coverage, run in terminal:
+pytest --cov="." --cov-report html
+python -m http.server -d htmlcov
+"""
