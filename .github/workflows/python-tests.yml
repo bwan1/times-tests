@@ -25,5 +25,4 @@ jobs:
       - name: Test with pytest
         run: |
           pytest
-          pytest --cov="." --cov-report html
-          python -m http.server -d htmlcov  
+          pytest --cov="."
